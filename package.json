@@ -1,0 +1,14 @@
+{
+  "name": "Redactle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.0",
+    "xmldom": "^0.3.0",
+    "xpath": "0.0.27"
+  }
+}

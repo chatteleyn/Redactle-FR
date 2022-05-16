@@ -1,0 +1,3 @@
+const punctuation = ['',' ','.','?','!',',',';',':','-','_','\'','\"','/','\\','(',')','[',']','{','}','|','*','<','>','—','«','»'];
+
+const commonWords = ['de','la','et','le','les','à','des','en','un','est','que','une','pour','il','qui','dans','a','pas','sur','je','ce','par','plus','ne','avec','se','vous','mais','ou','on','son','elle','nous','sont','tout','comme','cette','si','bien','sa','y','être','fait','ont','même','faire','ses','était','ai','ils'];
