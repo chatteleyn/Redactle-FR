@@ -8,7 +8,6 @@
   "dependencies": {
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
-    "xmldom": "^0.3.0",
-    "xpath": "0.0.27"
+    "xmldom": "^0.3.0"
   }
 }
