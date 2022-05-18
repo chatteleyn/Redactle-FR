@@ -15,7 +15,7 @@ body {
     margin-right: 465px;
 }
 
-#container p {
+#container p, #container li {
     font-size: 140%;
 }
 

@@ -22,6 +22,16 @@ function containsExcludedClasses(node) {
     return false;
 }
 
+function extractList(node) {
+    let elements = []
+    for (let child of Object.keys(node.childNodes)) {
+        if (node.childNodes[child].nodeName === "li") {
+            elements.push(extractText(node.childNodes[child]));
+        }
+    }
+    return elements;
+}
+
 function extractText(node) {
     if (!containsExcludedClasses(node)) {
         if (node.nodeType === node.TEXT_NODE && node.data) {
@@ -89,6 +99,18 @@ async function getPageContent(pageId) {
                     content: extractText(html.firstChild.childNodes[node])
                 });
             }
+            else if (nodeList[node].nodeName === 'ul') {
+                response.elements.push({
+                    type: 'ul',
+                    content: extractList(html.firstChild.childNodes[node]).map(i => { return { type: 'text', content: i }; })
+                });
+            }
+            else if (nodeList[node].nodeName === 'il') {
+                response.elements.push({
+                    type: 'il',
+                    content: extractList(html.firstChild.childNodes[node]).map(i => { return { type: 'text', content: i }; })
+                });
+            }
         }
 
         return response;
@@ -99,7 +121,7 @@ async function getPageContent(pageId) {
 }
 
 async function getPageid(title) {
-    const url = "https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch="+title+"&utf8=&format=json";
+    const url = "https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=" + title + "&utf8=&format=json";
     const req = await fetch(url);
     const content = await req.json();
     return content.query.search[0].pageid;
@@ -113,7 +135,7 @@ app.use('/:pageid', express.static('public'))
 
 app.get('/', async (req, res) => {
     let pageTitle = pageList.list[Math.floor(Math.random() * pageList.list.length)];
-    res.redirect('/'+ await getPageid(pageTitle));
+    res.redirect('/' + await getPageid(pageTitle));
 })
 
 app.listen(8080, () => {
