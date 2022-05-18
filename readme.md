@@ -11,7 +11,7 @@ npm install
 ## Usage
 
 ```bash
-npm start
+node app.js
 ```
 The site can be accessible at ``localhost:8080``
 
