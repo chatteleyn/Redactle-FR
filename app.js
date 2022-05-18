@@ -4,6 +4,8 @@ const app = express();
 let fetch = require('node-fetch');
 let { DOMParser } = require('xmldom');
 
+let pageList = require('./articles.json');
+
 let textNodes = ['p', 'blockquote', 'a', 'i', 'b'];
 let excludedClasses = ['reference', 'mw-editsection'];
 
@@ -96,22 +98,23 @@ async function getPageContent(pageId) {
     }
 }
 
+async function getPageid(title) {
+    const url = "https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch="+title+"&utf8=&format=json";
+    const req = await fetch(url);
+    const content = await req.json();
+    return content.query.search[0].pageid;
+}
+
 app.get('/api/:pageid', async (req, res) => {
     res.send(await getPageContent(req.params.pageid));
 })
 
-/*
-app.get('/:pageid', async (req, res) => {
-    res.send(req.params.pageid);
-})*/
-
 app.use('/:pageid', express.static('public'))
 
 app.get('/', async (req, res) => {
-    res.redirect('/'+9104);
+    let pageTitle = pageList.list[Math.floor(Math.random() * pageList.list.length)];
+    res.redirect('/'+ await getPageid(pageTitle));
 })
-
-//app.use(express.static('public'));
 
 app.listen(8080, () => {
     console.log('Running server');
