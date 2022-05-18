@@ -143,18 +143,31 @@ function revealPage() {
     }
 }
 
+
 function guess(word) {
     let table = document.querySelector("#guesses-table");
     if (word) {
         if (!(wordList.includes(word) || commonWords.includes(word) || punctuation.includes(word))) {
             word = word.toLowerCase().replace(" ", "");
             wordList.push(word);
-
+            
+            //TODO: Pourrait être en récursif
             let occ = 0;
             for (element of answer.elements) {
-                for (split of wordSplit(element.content)) {
-                    if (split.word.toLowerCase() === word.toLowerCase()) {
-                        occ++;
+                if(Array.isArray(element.content)){
+                    for(i of element.content) {
+                        for (split of wordSplit(i.content)) {
+                            if (split.word.toLowerCase() === word.toLowerCase()) {
+                                occ++;
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (split of wordSplit(element.content)) {
+                        if (split.word.toLowerCase() === word.toLowerCase()) {
+                            occ++;
+                        }
                     }
                 }
             }
