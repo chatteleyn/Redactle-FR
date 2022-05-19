@@ -16,7 +16,8 @@ body {
     margin-bottom: 80px;
 }
 
-#container p, #container li {
+#container p,
+#container li {
     font-size: 140%;
 }
 
@@ -33,8 +34,22 @@ body {
 }
 
 #container .hidden {
-    font-family: monospace;
     display: inline-block;
+}
+
+#container .highlighted {
+    display: inline-block;
+    background-color: #caf0f8;
+    color: black;
+    border-radius: 5px;
+}
+
+
+#container .selected {
+    display: inline-block;
+    background-color: #48cae4;
+    color: black;
+    border-radius: 5px;
 }
 
 #sidebar {
@@ -51,20 +66,46 @@ body {
 }
 
 #sidebar #guesses-table {
+    border-collapse: collapse;
     padding: 15px;
-    color:white;
+    color: white;
     width: 100%;
+    table-layout: fixed;
     text-align: left;
 }
 
 #sidebar th {
+    padding-top: 10;
     padding-bottom: 10px;
+    padding-left: 10px;
     border-bottom: 1px solid black;
-    margin-bottom: 10px;
 }
 
-#sidebar th:nth-child(1), #sidebar td:nth-child(1) {
-    width: 15%;
+#sidebar td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+#sidebar th:nth-child(1),
+#sidebar td:nth-child(1) {
+    width: 10%;
+}
+
+#sidebar th:nth-child(2),
+#sidebar td:nth-child(2) {
+    max-width: 80%;
+    overflow: hidden;
+}
+
+#sidebar th:nth-child(3),
+#sidebar td:nth-child(3) {
+    width: 10%;
+}
+
+#sidebar .selected td {
+    background-color: white;
+    color: black;
 }
 
 #bottombar {
@@ -94,6 +135,7 @@ body {
     background-color: white;
     border: none;
 }
+
 #input-container #button {
     width: 40px;
     height: 40px;
@@ -124,5 +166,5 @@ body {
     font-size: 20px;
     padding-left: 15px;
     padding-top: 15px;
-    top:50%;
+    top: 50%;
 }

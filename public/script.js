@@ -1,5 +1,8 @@
 let wordList = [];
 let answer;
+let selectedWord;
+let hits;
+let position = 0;
 
 async function getPageContent() {
     let pageid = window.location.pathname.replace('/', '');
@@ -28,7 +31,11 @@ function wordSplit(text) {
 function contentHide(text) {
     let split = wordSplit(text);
     split = split.map(i => {
-        if (!(punctuation.includes(i.word.toLowerCase()) || commonWords.includes(i.word.toLowerCase()) || wordList.includes(i.word.toLowerCase()))) {
+        if (i.word.toLocaleLowerCase() === selectedWord) {
+            i.word = '<div class=\'highlighted\'>' + i.word + '</div>';
+            hits++;
+        }
+        else if (!(punctuation.includes(i.word.toLowerCase()) || commonWords.includes(i.word.toLowerCase()) || wordList.includes(i.word.toLowerCase()))) {
             i.word = '<div class=\'hidden\'>' + '█'.repeat(i.word.length) + '</div>';
         }
         return i;
@@ -39,94 +46,49 @@ function contentHide(text) {
     return text;
 }
 
-function pageHide(page) {
-    for (let element of page.elements) {
+function pageHide() {
+    hits = 0;
+    for (let element of answer.elements) {
         if (Array.isArray(element.content)) {
             for (i of element.content) {
-                i.contentHidden = contentHide(i.content)
+                i.contentHidden = contentHide(i.content);
             }
         }
         else {
             element.contentHidden = contentHide(element.content);
         }
     }
-    return page;
 }
 
 function fillPage(content) {
     let container = document.querySelector('#container');
     container.innerHTML = '';
-    for (let element of content.elements) {
-        if (element.type === 'h1') {
-            let h1 = document.createElement('h1');
-            h1.innerHTML = element.contentHidden;
-            container.appendChild(h1);
-        }
-        else if (element.type === 'h2') {
-            let h2 = document.createElement('h2');
-            h2.innerHTML = element.contentHidden;
-            container.appendChild(h2);
-        }
-        else if (element.type === 'h3') {
-            let h3 = document.createElement('h3');
-            h3.innerHTML = element.contentHidden;
-            container.appendChild(h3);
-        }
-        else if (element.type === 'text') {
-            let p = document.createElement('p');
-            p.innerHTML = element.contentHidden;
-            container.appendChild(p);
-        }
-        else if (element.type === 'ul') {
-            let ul = document.createElement('ul');
-            for (i of element.content) {
-                let li = document.createElement('li');
-                li.innerHTML = i.contentHidden;
-                ul.appendChild(li);
-            }
-            container.appendChild(ul);
-        }
-        else if (element.type === 'ol') {
-            let ul = document.createElement('ol');
-            for (i of element.content) {
-                let li = document.createElement('li');
-                li.innerHTML = i.contentHidden;
-                ul.appendChild(li);
-            }
-            container.appendChild(ol);
-        }
-    }
-}
-
-function revealPage() {
-    let container = document.querySelector('#container');
-    container.innerHTML = '';
     for (let element of answer.elements) {
         if (element.type === 'h1') {
             let h1 = document.createElement('h1');
-            h1.innerHTML = element.content;
+            h1.innerHTML = element[content];
             container.appendChild(h1);
         }
         if (element.type === 'h2') {
             let h2 = document.createElement('h2');
-            h2.innerHTML = element.content;
+            h2.innerHTML = element[content];
             container.appendChild(h2);
         }
         else if (element.type === 'h3') {
             let h3 = document.createElement('h3');
-            h3.innerHTML = element.content;
+            h3.innerHTML = element[content];
             container.appendChild(h3);
         }
         else if (element.type === 'text') {
             let p = document.createElement('p');
-            p.innerHTML = element.content;
+            p.innerHTML = element[content];
             container.appendChild(p);
         }
         else if (element.type === 'ul') {
             let ul = document.createElement('ul');
             for (i of element.content) {
                 let li = document.createElement('li');
-                li.innerHTML = i.content;
+                li.innerHTML = i[content];
                 ul.appendChild(li);
             }
             container.appendChild(ul);
@@ -135,7 +97,7 @@ function revealPage() {
             let ol = document.createElement('ol');
             for (i of element.content) {
                 let li = document.createElement('li');
-                li.innerHTML = i.content;
+                li.innerHTML = i[content];
                 ol.appendChild(li);
             }
             container.appendChild(ol);
@@ -143,6 +105,14 @@ function revealPage() {
     }
 }
 
+function scrollToWord() {
+    let element = document.querySelectorAll("#container .highlighted")[position];
+    document.querySelectorAll("#container .selected").forEach(a => { a.classList.remove("selected") });
+    console.log("test1")
+    element.classList.add("selected");
+    console.log("test2")
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
 function guess(word) {
     let table = document.querySelector("#guesses-table");
@@ -150,30 +120,13 @@ function guess(word) {
         if (!(wordList.includes(word) || commonWords.includes(word) || punctuation.includes(word))) {
             word = word.toLowerCase().replace(" ", "");
             wordList.push(word);
-            
-            //TODO: Pourrait être en récursif
-            let occ = 0;
-            for (element of answer.elements) {
-                if(Array.isArray(element.content)){
-                    for(i of element.content) {
-                        for (split of wordSplit(i.content)) {
-                            if (split.word.toLowerCase() === word.toLowerCase()) {
-                                occ++;
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (split of wordSplit(element.content)) {
-                        if (split.word.toLowerCase() === word.toLowerCase()) {
-                            occ++;
-                        }
-                    }
-                }
-            }
-            fillPage(pageHide(answer));
+            selectedWord = word;
+            pageHide()
+            fillPage("contentHidden");
             let th = table.querySelector("#table-head");
             let tr = document.createElement("tr");
+            table.querySelectorAll(".selected").forEach(a => { a.classList.remove("selected") });
+            tr.classList.add("selected");
             th.parentNode.insertBefore(tr, th.nextSibling);
             let nbTd = document.createElement("td");
             nbTd.innerHTML = wordList.length;
@@ -182,23 +135,42 @@ function guess(word) {
             wordTd.innerHTML = word;
             tr.appendChild(wordTd);
             let hitsTd = document.createElement("td");
-            hitsTd.innerHTML = occ;
+            hitsTd.innerHTML = hits;
             tr.appendChild(hitsTd);
+
+            tr.addEventListener("click", e => {
+                if (hits > 0) {
+                    if (e.target.parentNode.childNodes[1].innerHTML === selectedWord) {
+                        position = (position + 1) % hits;
+                        scrollToWord();
+                    }
+                    else {
+                        position = 0;
+                        selectedWord = e.target.parentNode.childNodes[1].innerHTML;
+                        document.querySelectorAll(".selected").forEach(a => { a.classList.remove("selected") });
+                        e.target.parentNode.classList.add("selected");
+                        pageHide();
+                        fillPage("contentHidden");
+                        scrollToWord();
+                    }
+                }
+            })
         }
         else if (wordList.includes(word)) {
             alert("Deja fait");
         }
     }
-    if (document.querySelector("h1").innerHTML == answer.title) {
-        revealPage();
+    if (!document.querySelector("h1").innerHTML.includes("█")) {
+        fillPage("content");
     }
 }
 
-console.log("\nEssaye plutôt de trouver par toi même plutôt que d'essayer de tricher 😉\n")
+console.log("\nEssaye plutôt de trouver par toi même plutôt que d'essayer de tricher 😉\n");
 
 getPageContent().then(content => {
     answer = content;
-    fillPage(pageHide(answer));
+    pageHide();
+    fillPage("contentHidden");
 });
 
 document.querySelector('#button').addEventListener("click", e => {
@@ -208,7 +180,7 @@ document.querySelector('#button').addEventListener("click", e => {
 
 document.querySelector('#input').addEventListener("keypress", e => {
     if (e.key === "Enter") {
-        guess(e.target.value)
+        guess(e.target.value);
         e.target.value = '';
     }
 })
