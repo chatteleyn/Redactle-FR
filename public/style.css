@@ -85,6 +85,7 @@ body {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
+    cursor:pointer;
 }
 
 #sidebar th:nth-child(1),
@@ -167,4 +168,12 @@ body {
     padding-left: 15px;
     padding-top: 15px;
     top: 50%;
+}
+
+#topbar div {
+    display: inline-block;
+}
+
+#topbar #random {
+    margin-left: 50px;
 }
