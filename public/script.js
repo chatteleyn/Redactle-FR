@@ -108,9 +108,7 @@ function fillPage(content) {
 function scrollToWord() {
     let element = document.querySelectorAll("#container .highlighted")[position];
     document.querySelectorAll("#container .selected").forEach(a => { a.classList.remove("selected") });
-    console.log("test1")
     element.classList.add("selected");
-    console.log("test2")
     element.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
