@@ -7,7 +7,7 @@ let { DOMParser } = require('xmldom');
 let pageList = require('./articles.json');
 
 let textNodes = ['p', 'blockquote', 'a', 'i', 'b'];
-let excludedClasses = ['reference', 'mw-editsection'];
+let excludedClasses = ['reference', 'mw-editsection', 'prononciation', 'noprint'];
 
 function containsExcludedClasses(node) {
     if (node.attributes) {

@@ -137,7 +137,7 @@ function guess(word) {
             tr.appendChild(hitsTd);
 
             tr.addEventListener("click", e => {
-                if (hits > 0) {
+                if (e.target.parentNode.childNodes[2].innerHTML > 0) {
                     if (e.target.parentNode.childNodes[1].innerHTML === selectedWord) {
                         position = (position + 1) % hits;
                         scrollToWord();
