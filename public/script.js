@@ -31,7 +31,7 @@ function wordSplit(text) {
 function contentHide(text) {
     let split = wordSplit(text);
     split = split.map(i => {
-        if (i.word.toLocaleLowerCase() === selectedWord) {
+        if (i.word.toLowerCase() === selectedWord) {
             i.word = '<div class=\'highlighted\'>' + i.word + '</div>';
             hits++;
         }
@@ -115,7 +115,7 @@ function scrollToWord() {
 function guess(word) {
     let table = document.querySelector("#guesses-table");
     if (word) {
-        if (!(wordList.includes(word) || commonWords.includes(word) || punctuation.includes(word))) {
+        if (!(wordList.includes(word.toLowerCase()) || commonWords.includes(word.toLowerCase()) || punctuation.includes(word.toLowerCase()))) {
             word = word.toLowerCase().replace(" ", "");
             wordList.push(word);
             selectedWord = word;
@@ -154,8 +154,11 @@ function guess(word) {
                 }
             })
         }
-        else if (wordList.includes(word)) {
-            alert("Deja fait");
+        else if (wordList.includes(word.toLowerCase())) {
+            document.querySelectorAll(".selected").forEach(a => { a.classList.remove("selected") });
+            let row = document.querySelectorAll("#guesses-table tr")[wordList.length - wordList.findIndex(e => e === word.toLowerCase())];
+            row.classList.add("selected");
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }
     if (!document.querySelector("h1").innerHTML.includes("█")) {
